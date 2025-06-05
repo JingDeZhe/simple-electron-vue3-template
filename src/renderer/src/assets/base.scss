@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'LXGWWenKai';
+  src: url('/LXGWWenKai-Medium.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LXGWWenKai';
+  src: url('/LXGWWenKai-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'LXGWWenKai';
+  src: url('/LXGWWenKai-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+
+html,
+body {
+  --at-apply: m-0 p-0 overflow-hidden;
+  font-family: LXGWWenKai, serif;
+}
+
+body {
+  transition:
+    color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
+  color: #333639;
+  background-color: #fff;
+  &[theme='dark'] {
+    background-color: #161616;
+    color: #ffffffd1;
+  }
+}
+
+.all-center {
+  --at-apply: flex flex-col items-center justify-center;
+}
