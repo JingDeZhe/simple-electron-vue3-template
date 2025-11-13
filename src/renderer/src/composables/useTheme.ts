@@ -3,12 +3,7 @@ import { useDark, useToggle } from '@vueuse/core'
 import { computed } from 'vue'
 
 export function useNaiveTheme() {
-  const isDark = useDark({
-    selector: 'body',
-    attribute: 'theme',
-    valueDark: 'dark',
-    valueLight: 'light'
-  })
+  const isDark = useDark()
 
   const toggleDark = useToggle(isDark)
 
