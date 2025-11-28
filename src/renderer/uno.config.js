@@ -3,7 +3,7 @@ import {
   presetWind3,
   presetIcons,
   transformerVariantGroup,
-  transformerDirectives,
+  transformerDirectives
 } from 'unocss'
 
 export default defineConfig({
@@ -11,16 +11,15 @@ export default defineConfig({
     presetWind3(),
     presetIcons({
       extraProperties: {
-        display: 'inline-block',
-        'vertical-align': 'middle',
-      },
-    }),
+        display: 'inline-block'
+      }
+    })
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
-    colors: {},
+    colors: {}
   },
-  safelist: getSafeList(),
+  safelist: getSafeList()
 })
 
 /**注意safe list如果是依赖其他文件动态生成的，实际上只有启动的时候生效一次 */
