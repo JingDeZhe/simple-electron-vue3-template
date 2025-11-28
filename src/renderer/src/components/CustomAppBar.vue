@@ -1,6 +1,6 @@
 <template>
   <n-el class="flex justify-end overflow-hidden text-[var(--text-color)] bg-[var(--card-color)]">
-    <div class="flex-1" style="app-region: drag"></div>
+    <div class="flex-1 self-stretch" style="app-region: drag"></div>
     <div>
       <n-button quaternary @click="toggleDark()">
         <i class="i-tabler-sun-filled" v-if="isDark"></i>

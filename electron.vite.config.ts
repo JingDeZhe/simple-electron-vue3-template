@@ -11,6 +11,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
+    server: { port: 9990 },
     resolve: {
       alias: {
         '@': resolve('src/renderer/src'),
@@ -18,6 +19,6 @@ export default defineConfig({
         '@preload': resolve('src/preload')
       }
     },
-    plugins: [vue(), UnoCSS()]
+    plugins: [vue(), UnoCSS({ inspector: false })]
   }
 })
