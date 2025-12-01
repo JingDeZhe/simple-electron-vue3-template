@@ -6,6 +6,9 @@
         <i class="i-tabler-sun-filled" v-if="isDark"></i>
         <i class="i-tabler-moon-filled" v-else></i>
       </n-button>
+      <n-button quaternary @click="toogleAiConfig()">
+        <i class="i-tabler-brand-adobe-illustrator"></i>
+      </n-button>
       <n-button quaternary @click="minimize">
         <i class="i-tabler-minus"></i>
       </n-button>
@@ -23,11 +26,17 @@
 <script setup lang="ts">
 import { useNaiveTheme } from '@/composables/useTheme'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const { isDark, toggleDark } = useNaiveTheme()
 const { minimize, toggleMaximize, close, onMaximized, onUnmaximized } = window.electron
 
 const isMaximized = ref(false)
+
+const router = useRouter()
+const toogleAiConfig = () => {
+  router.push({ path: '/ai/config' })
+}
 
 // 监听窗口状态变化
 onMounted(() => {

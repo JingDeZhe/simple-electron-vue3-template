@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { innerData } from './inner-db'
+import { registerAIConfigHandlers } from './ai/ipc'
 
 function createWindow(): void {
   // Create the browser window.
@@ -62,6 +63,9 @@ function createWindow(): void {
   ipcMain.handle('test-database', async () => {
     return innerData.testDatabase()
   })
+
+  // 注册 AI 配置相关的 IPC 处理函数
+  registerAIConfigHandlers()
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

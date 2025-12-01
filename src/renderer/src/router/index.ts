@@ -18,6 +18,18 @@ const routes: RouteRecordRaw[] = [
         path: 'about',
         name: 'about',
         component: About
+      },
+      {
+        path: 'ai',
+        name: 'ai',
+        redirect: '/ai/config',
+        children: [
+          {
+            path: 'config',
+            name: 'aiConfig',
+            component: () => import('@/views/ai/AIConfig.vue')
+          }
+        ]
       }
     ]
   }

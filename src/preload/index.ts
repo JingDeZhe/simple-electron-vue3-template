@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { AIConfig, CreateAIConfigInput, UpdateAIConfigInput } from '../shared/type'
 
 // Custom APIs for renderer
 const electronAPI = {
@@ -20,7 +21,22 @@ const electronAPI = {
 
 export type ElectronAPI = typeof electronAPI
 
-const api = {}
+const api = {
+  // AI 配置管理
+  aiConfig: {
+    getAll: (): Promise<AIConfig[]> => ipcRenderer.invoke('ai-config:get-all'),
+    getById: (id: string): Promise<AIConfig | undefined> =>
+      ipcRenderer.invoke('ai-config:get-by-id', id),
+    getDefault: (): Promise<AIConfig | undefined> => ipcRenderer.invoke('ai-config:get-default'),
+    create: (input: CreateAIConfigInput): Promise<AIConfig> =>
+      ipcRenderer.invoke('ai-config:create', input),
+    update: (input: UpdateAIConfigInput): Promise<AIConfig | undefined> =>
+      ipcRenderer.invoke('ai-config:update', input),
+    delete: (id: string): Promise<boolean> => ipcRenderer.invoke('ai-config:delete', id),
+    testConnection: (id: string): Promise<{ success: boolean; message: string }> =>
+      ipcRenderer.invoke('ai-config:test-connection', id)
+  }
+}
 
 export type ElectronOtherAPI = typeof api
 
