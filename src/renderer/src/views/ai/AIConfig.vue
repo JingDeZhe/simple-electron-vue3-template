@@ -8,13 +8,11 @@ import { useRouter } from 'vue-router'
 const message = useMessage()
 const dialog = useDialog()
 
-// 状态管理
 const configs = ref<AIConfig[]>([])
 const loading = ref(false)
 const showModal = ref(false)
 const editingConfig = ref<AIConfig | null>(null)
 
-// 表单数据
 const formData = ref<CreateAIConfigInput>({
   name: '',
   baseURL: '',
@@ -28,7 +26,6 @@ const formData = ref<CreateAIConfigInput>({
   isDefault: false
 })
 
-// 加载所有配置
 async function loadConfigs() {
   try {
     loading.value = true
@@ -40,7 +37,6 @@ async function loadConfigs() {
   }
 }
 
-// 打开新增对话框
 function openCreateModal() {
   editingConfig.value = null
   formData.value = {
@@ -58,7 +54,6 @@ function openCreateModal() {
   showModal.value = true
 }
 
-// 打开编辑对话框
 function openEditModal(config: AIConfig) {
   editingConfig.value = config
   formData.value = {
@@ -76,7 +71,6 @@ function openEditModal(config: AIConfig) {
   showModal.value = true
 }
 
-// 保存配置
 async function saveConfig() {
   try {
     if (!formData.value.name || !formData.value.baseURL || !formData.value.apiKey) {
@@ -87,7 +81,7 @@ async function saveConfig() {
     loading.value = true
 
     if (editingConfig.value) {
-      // 更新
+      // 使用 toDeepRaw 解除 Vue 响应式代理，避免 IPC 序列化失败
       await window.api.aiConfig.update(
         toDeepRaw({
           id: editingConfig.value.id,
@@ -96,7 +90,6 @@ async function saveConfig() {
       )
       message.success('更新成功')
     } else {
-      // 创建
       await window.api.aiConfig.create(toDeepRaw(formData.value))
       message.success('创建成功')
     }
@@ -110,7 +103,6 @@ async function saveConfig() {
   }
 }
 
-// 删除配置
 function deleteConfig(config: AIConfig) {
   dialog.warning({
     title: '确认删除',
@@ -132,7 +124,6 @@ function deleteConfig(config: AIConfig) {
   })
 }
 
-// 设置为默认配置
 async function setDefault(config: AIConfig) {
   try {
     loading.value = true
@@ -149,7 +140,6 @@ async function setDefault(config: AIConfig) {
   }
 }
 
-// 测试连接
 async function testConnection(config: AIConfig) {
   try {
     loading.value = true
@@ -222,7 +212,6 @@ function back() {
       </n-list>
     </n-card>
 
-    <!-- 新增/编辑对话框 -->
     <n-modal v-model:show="showModal" :mask-closable="false">
       <n-card
         :title="editingConfig ? '编辑配置' : '新增配置'"

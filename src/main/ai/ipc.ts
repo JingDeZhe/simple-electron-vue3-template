@@ -1,16 +1,9 @@
-/**
- * AI 配置相关 IPC 处理器
- */
 import { ipcMain } from 'electron'
 import { aiConfigDB } from '../db'
 import type { CreateAIConfigInput, UpdateAIConfigInput } from '../../shared/type'
 import { createAIService } from './index'
 
-/**
- * 注册 AI 配置相关 IPC 处理器
- */
 export function registerAIConfigHandlers(): void {
-  // 获取所有配置
   ipcMain.handle('ai-config:get-all', async () => {
     try {
       return aiConfigDB.findAll()
@@ -19,7 +12,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 根据 ID 获取配置
   ipcMain.handle('ai-config:get-by-id', async (_, id: string) => {
     try {
       return aiConfigDB.findById(id)
@@ -28,7 +20,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 获取默认配置
   ipcMain.handle('ai-config:get-default', async () => {
     try {
       return aiConfigDB.findDefault()
@@ -37,7 +28,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 创建配置
   ipcMain.handle('ai-config:create', async (_, input: CreateAIConfigInput) => {
     try {
       return aiConfigDB.create(input)
@@ -46,7 +36,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 更新配置
   ipcMain.handle('ai-config:update', async (_, input: UpdateAIConfigInput) => {
     try {
       return aiConfigDB.update(input)
@@ -55,7 +44,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 删除配置
   ipcMain.handle('ai-config:delete', async (_, id: string) => {
     try {
       return aiConfigDB.delete(id)
@@ -64,7 +52,6 @@ export function registerAIConfigHandlers(): void {
     }
   })
 
-  // 测试配置连接
   ipcMain.handle('ai-config:test-connection', async (_, id: string) => {
     try {
       const config = aiConfigDB.findById(id)

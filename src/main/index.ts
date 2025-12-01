@@ -6,7 +6,6 @@ import { innerData } from './inner-db'
 import { registerAIConfigHandlers } from './ai/ipc'
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -30,7 +29,7 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // 通知渲染进程窗口状态变化
+  // 同步窗口最大化状态到渲染进程，用于更新窗口控制按钮图标
   mainWindow.on('maximize', () => {
     mainWindow.webContents.send('window-maximized')
   })
@@ -39,7 +38,6 @@ function createWindow(): void {
     mainWindow.webContents.send('window-unmaximized')
   })
 
-  // 窗口操作
   ipcMain.handle('window-minimize', () => {
     const activeWindow = mainWindow
     activeWindow.minimize()
@@ -59,16 +57,13 @@ function createWindow(): void {
     activeWindow.close()
   })
 
-  // 测试sqlite3数据库是否正常连接
   ipcMain.handle('test-database', async () => {
     return innerData.testDatabase()
   })
 
-  // 注册 AI 配置相关的 IPC 处理函数
   registerAIConfigHandlers()
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
+  // 开发环境使用 HMR 热更新，生产环境加载本地 HTML
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -76,37 +71,25 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  // Set app user model id for windows
   electronApp.setAppUserModelId('com.unknow.code')
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  // 开发环境监听 F12 开关 DevTools，生产环境忽略 Ctrl+R 刷新
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   createWindow()
 
+  // macOS 特性：点击 Dock 图标时重新创建窗口
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// macOS 特性：关闭所有窗口时不退出应用，保持菜单栏激活
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

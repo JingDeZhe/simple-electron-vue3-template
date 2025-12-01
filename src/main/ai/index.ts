@@ -1,6 +1,3 @@
-/**
- * AI 服务核心模块 - 基于 OpenAI SDK
- */
 import OpenAI from 'openai'
 import type { AIConfig } from '@shared/type'
 import type {
@@ -9,14 +6,9 @@ import type {
   ChatCompletionMessageParam
 } from 'openai/resources/chat/completions'
 
-/**
- * 聊天消息接口（兼容 OpenAI 格式）
- */
+// 导出兼容 OpenAI 格式的消息类型
 export type { ChatCompletionMessageParam as ChatMessage }
 
-/**
- * 聊天完成请求参数
- */
 export interface ChatCompletionRequest {
   model?: string
   messages: ChatCompletionMessageParam[]
@@ -28,14 +20,9 @@ export interface ChatCompletionRequest {
   stream?: boolean
 }
 
-/**
- * 聊天完成响应（使用 OpenAI 原生类型）
- */
+// 直接使用 OpenAI 原生类型，避免重复定义
 export type { ChatCompletion as ChatCompletionResponse }
 
-/**
- * AI 服务类
- */
 export class AIService {
   private config: AIConfig
   private client: OpenAI
@@ -45,14 +32,11 @@ export class AIService {
     this.client = new OpenAI({
       apiKey: config.apiKey,
       baseURL: config.baseURL,
-      timeout: 30000, // 30秒超时
-      maxRetries: 2 // 最多重试2次
+      timeout: 30000,
+      maxRetries: 2
     })
   }
 
-  /**
-   * 发起聊天完成请求
-   */
   async chat(request: ChatCompletionRequest): Promise<ChatCompletion> {
     const params: ChatCompletionCreateParamsNonStreaming = {
       model: request.model || this.config.model || 'deepseek-chat',
@@ -73,9 +57,6 @@ export class AIService {
     }
   }
 
-  /**
-   * 测试配置连接有效性
-   */
   async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
       const response = await this.chat({
@@ -93,17 +74,12 @@ export class AIService {
     }
   }
 
-  /**
-   * 获取 OpenAI 客户端实例（用于高级操作）
-   */
+  // 暴露底层客户端以支持流式响应等高级特性
   getClient(): OpenAI {
     return this.client
   }
 }
 
-/**
- * 创建 AI 服务实例
- */
 export function createAIService(config: AIConfig): AIService {
   return new AIService(config)
 }

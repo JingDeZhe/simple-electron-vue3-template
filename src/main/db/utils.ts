@@ -1,18 +1,11 @@
-/**
- * 数据库工具函数
- */
 import Database from 'better-sqlite3'
 
-/**
- * 转义 SQL LIKE 模式中的特殊字符
- */
+// 转义 SQL LIKE 模式中的特殊字符，防止注入攻击
 export function escapeLikePattern(pattern: string): string {
   return pattern.replace(/[%_]/g, '\\$&')
 }
 
-/**
- * 安全地构建 LIKE 查询条件
- */
+// 安全地构建 LIKE 查询条件，自动转义用户输入
 export function buildLikeCondition(
   field: string,
   pattern: string,
@@ -40,23 +33,14 @@ export function buildLikeCondition(
   }
 }
 
-/**
- * 将驼峰命名转换为下划线命名
- */
 export function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
 }
 
-/**
- * 将下划线命名转换为驼峰命名
- */
 export function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
 }
 
-/**
- * 将对象的键从驼峰转为下划线
- */
 export function objectToSnakeCase(obj: Record<string, any>): Record<string, any> {
   const result: Record<string, any> = {}
   for (const [key, value] of Object.entries(obj)) {
@@ -65,9 +49,6 @@ export function objectToSnakeCase(obj: Record<string, any>): Record<string, any>
   return result
 }
 
-/**
- * 将对象的键从下划线转为驼峰
- */
 export function objectToCamelCase(obj: Record<string, any>): Record<string, any> {
   const result: Record<string, any> = {}
   for (const [key, value] of Object.entries(obj)) {
@@ -76,16 +57,10 @@ export function objectToCamelCase(obj: Record<string, any>): Record<string, any>
   return result
 }
 
-/**
- * 执行数据库备份
- */
 export function backupDatabase(db: Database.Database, backupPath: string): void {
   db.backup(backupPath)
 }
 
-/**
- * 获取数据库统计信息
- */
 export function getDatabaseStats(db: Database.Database): {
   pageCount: number
   pageSize: number
@@ -104,16 +79,12 @@ export function getDatabaseStats(db: Database.Database): {
   }
 }
 
-/**
- * 执行数据库 VACUUM 优化
- */
+// 回收空闲页面，减小数据库文件体积
 export function vacuumDatabase(db: Database.Database): void {
   db.exec('VACUUM')
 }
 
-/**
- * 执行数据库分析以优化查询计划
- */
+// 更新表统计信息，帮助查询优化器选择更好的执行计划
 export function analyzeDatabase(db: Database.Database, tableName?: string): void {
   if (tableName) {
     db.exec(`ANALYZE ${tableName}`)
@@ -122,25 +93,16 @@ export function analyzeDatabase(db: Database.Database, tableName?: string): void
   }
 }
 
-/**
- * 检查数据库完整性
- */
 export function checkDatabaseIntegrity(db: Database.Database): boolean {
   const result = db.pragma('integrity_check', { simple: true })
   return result === 'ok'
 }
 
-/**
- * 格式化时间戳为 SQLite 日期时间字符串
- */
 export function timestampToSQLiteDateTime(timestamp: number): string {
   const date = new Date(timestamp)
   return date.toISOString().replace('T', ' ').substring(0, 19)
 }
 
-/**
- * 将 SQLite 日期时间字符串转换为时间戳
- */
 export function sqliteDateTimeToTimestamp(dateTimeStr: string): number {
   return new Date(dateTimeStr).getTime()
 }

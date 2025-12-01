@@ -6,7 +6,6 @@ const loading = ref(false)
 const handleTestDB = async () => {
   loading.value = true
   try {
-    // 通过Electron IPC调用数据库测试
     const result = await window.electron.testDatabase()
     testResult.value = result
     console.log('测试数据库连接：', result)

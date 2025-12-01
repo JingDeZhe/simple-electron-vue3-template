@@ -1,6 +1,3 @@
-/**
- * AI 配置数据库管理模块
- */
 import Database from 'better-sqlite3'
 import { app } from 'electron'
 import { join } from 'path'
@@ -12,7 +9,7 @@ class AIConfigDB {
   private db: Database.Database
 
   constructor() {
-    // 使用 userData 目录存储数据库
+    // 使用 userData 目录存储数据库，确保跨平台兼容性和用户权限
     const userDataPath = app.getPath('userData')
     const dbPath = join(userDataPath, 'main.db')
 
@@ -22,21 +19,15 @@ class AIConfigDB {
     this.initTable()
   }
 
-  /**
-   * 初始化 AI 配置表
-   */
   private initTable(): void {
     this.db.exec(initSQL)
   }
 
-  /**
-   * 创建 AI 配置
-   */
   create(input: CreateAIConfigInput): AIConfig {
     const now = Date.now()
     const id = getUid()
 
-    // 如果设置为默认配置，先清除其他配置的默认标记
+    // 确保同一时间只有一个默认配置
     if (input.isDefault) {
       this.clearDefaultConfig()
     }
@@ -67,9 +58,6 @@ class AIConfigDB {
     return this.findById(id)!
   }
 
-  /**
-   * 根据 ID 查找配置
-   */
   findById(id: string): AIConfig | undefined {
     const stmt = this.db.prepare('SELECT * FROM ai_configs WHERE id = ?')
     const row = stmt.get(id) as any
@@ -77,9 +65,6 @@ class AIConfigDB {
     return row ? this.mapRowToConfig(row) : undefined
   }
 
-  /**
-   * 获取所有配置
-   */
   findAll(): AIConfig[] {
     const stmt = this.db.prepare('SELECT * FROM ai_configs ORDER BY created_at DESC')
     const rows = stmt.all() as any[]
@@ -87,9 +72,6 @@ class AIConfigDB {
     return rows.map((row) => this.mapRowToConfig(row))
   }
 
-  /**
-   * 获取默认配置
-   */
   findDefault(): AIConfig | undefined {
     const stmt = this.db.prepare('SELECT * FROM ai_configs WHERE is_default = 1 LIMIT 1')
     const row = stmt.get() as any
@@ -97,9 +79,6 @@ class AIConfigDB {
     return row ? this.mapRowToConfig(row) : undefined
   }
 
-  /**
-   * 更新配置
-   */
   update(input: UpdateAIConfigInput): AIConfig | undefined {
     const existing = this.findById(input.id)
     if (!existing) {
@@ -108,7 +87,7 @@ class AIConfigDB {
 
     const now = Date.now()
 
-    // 如果设置为默认配置，先清除其他配置的默认标记
+    // 确保同一时间只有一个默认配置
     if (input.isDefault) {
       this.clearDefaultConfig()
     }
@@ -171,9 +150,6 @@ class AIConfigDB {
     return this.findById(input.id)
   }
 
-  /**
-   * 删除配置
-   */
   delete(id: string): boolean {
     const stmt = this.db.prepare('DELETE FROM ai_configs WHERE id = ?')
     const result = stmt.run(id)
@@ -181,17 +157,11 @@ class AIConfigDB {
     return result.changes > 0
   }
 
-  /**
-   * 清除所有配置的默认标记
-   */
   private clearDefaultConfig(): void {
     const stmt = this.db.prepare('UPDATE ai_configs SET is_default = 0 WHERE is_default = 1')
     stmt.run()
   }
 
-  /**
-   * 将数据库行映射为 AIConfig 对象
-   */
   private mapRowToConfig(row: any): AIConfig {
     return {
       id: row.id,
@@ -210,9 +180,6 @@ class AIConfigDB {
     }
   }
 
-  /**
-   * 关闭数据库连接
-   */
   close(): void {
     this.db?.close()
   }

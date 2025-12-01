@@ -1,7 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { AIConfig, CreateAIConfigInput, UpdateAIConfigInput } from '../shared/type'
 
-// Custom APIs for renderer
 const electronAPI = {
   minimize: () => ipcRenderer.invoke('window-minimize'),
   toggleMaximize: () => ipcRenderer.invoke('window-toggle-maximize'),
@@ -22,7 +21,6 @@ const electronAPI = {
 export type ElectronAPI = typeof electronAPI
 
 const api = {
-  // AI 配置管理
   aiConfig: {
     getAll: (): Promise<AIConfig[]> => ipcRenderer.invoke('ai-config:get-all'),
     getById: (id: string): Promise<AIConfig | undefined> =>
@@ -40,9 +38,7 @@ const api = {
 
 export type ElectronOtherAPI = typeof api
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
+// 启用上下文隔离时使用 contextBridge 安全暴露 API，否则直接挂载到全局对象
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
@@ -51,8 +47,8 @@ if (process.contextIsolated) {
     console.error(error)
   }
 } else {
-  // @ts-ignore (define in dts)
+  // @ts-ignore (类型定义在 dts 文件中)
   window.electron = electronAPI
-  // @ts-ignore (define in dts)
+  // @ts-ignore (类型定义在 dts 文件中)
   window.api = api
 }

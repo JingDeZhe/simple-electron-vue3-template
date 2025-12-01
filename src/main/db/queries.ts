@@ -1,11 +1,5 @@
-/**
- * 数据库查询辅助函数
- */
 import Database from 'better-sqlite3'
 
-/**
- * 查询构建器接口
- */
 export interface QueryBuilder {
   table: string
   select?: string[]
@@ -15,9 +9,6 @@ export interface QueryBuilder {
   offset?: number
 }
 
-/**
- * 构建 SELECT 查询
- */
 export function buildSelectQuery(builder: QueryBuilder): string {
   const { table, select, where, orderBy, limit, offset } = builder
 
@@ -44,9 +35,6 @@ export function buildSelectQuery(builder: QueryBuilder): string {
   return query
 }
 
-/**
- * 执行分页查询
- */
 export function executePaginatedQuery<T>(
   db: Database.Database,
   query: string,
@@ -54,11 +42,9 @@ export function executePaginatedQuery<T>(
   page: number = 1,
   pageSize: number = 10
 ): { data: T[]; total: number; page: number; pageSize: number } {
-  // 获取总数
   const countQuery = `SELECT COUNT(*) as total FROM (${query})`
   const countResult = db.prepare(countQuery).get(...params) as { total: number }
 
-  // 获取分页数据
   const offset = (page - 1) * pageSize
   const paginatedQuery = `${query} LIMIT ? OFFSET ?`
   const data = db.prepare(paginatedQuery).all(...params, pageSize, offset) as T[]
@@ -71,9 +57,7 @@ export function executePaginatedQuery<T>(
   }
 }
 
-/**
- * 批量插入数据
- */
+// 使用事务确保批量插入的原子性
 export function batchInsert(
   db: Database.Database,
   table: string,
@@ -94,9 +78,6 @@ export function batchInsert(
   return rows.length
 }
 
-/**
- * 检查表是否存在
- */
 export function tableExists(db: Database.Database, tableName: string): boolean {
   const result = db
     .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`)
@@ -104,9 +85,6 @@ export function tableExists(db: Database.Database, tableName: string): boolean {
   return !!result
 }
 
-/**
- * 获取表的所有列名
- */
 export function getTableColumns(db: Database.Database, tableName: string): string[] {
   const result = db.prepare(`PRAGMA table_info(${tableName})`).all() as Array<{ name: string }>
   return result.map((r) => r.name)

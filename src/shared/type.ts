@@ -1,6 +1,4 @@
-/**
- * AI 配置类型定义 - 支持 OpenAI 兼容配置项
- */
+// 支持 OpenAI 兼容的 AI 配置类型定义
 export interface AIConfig {
   id: string // 唯一标识
   name: string // 配置名称
@@ -17,9 +15,6 @@ export interface AIConfig {
   updatedAt: number // 更新时间戳
 }
 
-/**
- * 创建 AI 配置的输入参数
- */
 export interface CreateAIConfigInput {
   name: string
   baseURL: string
@@ -33,9 +28,6 @@ export interface CreateAIConfigInput {
   isDefault?: boolean
 }
 
-/**
- * 更新 AI 配置的输入参数
- */
 export interface UpdateAIConfigInput {
   id: string
   name?: string
@@ -46,6 +38,5 @@ export interface UpdateAIConfigInput {
   maxTokens?: number
   topP?: number
   frequencyPenalty?: number
-  presencePenalty?: number
-  isDefault?: boolean
+  presencePenalty?: boolean
 }
