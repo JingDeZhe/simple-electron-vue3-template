@@ -3,7 +3,7 @@
  */
 import Database from 'better-sqlite3'
 // 注意引用resources里的sqlite文件需要添加?asset&asarUnpack后缀
-import innerDBPath from '../../../resources/inner.sqlite?asset&asarUnpack'
+// import innerDBPath from '../../../resources/inner.sqlite?asset&asarUnpack'
 
 export interface InnerDataInfo {
   version: number
@@ -22,8 +22,8 @@ class InnerData {
   private db: Database.Database
 
   constructor() {
-    // 初始化数据库连接
-    this.db = new Database(innerDBPath)
+    // 初始化数据库连接，不使用innerDB作为演示
+    this.db = new Database(':memory:')
     this.db.pragma('journal_mode = WAL') // 更好的并发性能
 
     // 创建版本表用于管理数据库版本
