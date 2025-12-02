@@ -38,5 +38,6 @@ export interface UpdateAIConfigInput {
   maxTokens?: number
   topP?: number
   frequencyPenalty?: number
-  presencePenalty?: boolean
+  presencePenalty?: number
+  isDefault?: boolean
 }
