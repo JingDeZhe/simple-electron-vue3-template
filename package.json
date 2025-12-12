@@ -23,9 +23,9 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "better-sqlite3": "^12.4.1",
+    "better-sqlite3": "^12.5.0",
     "electron-log": "^5.4.3",
-    "openai": "^6.9.1",
+    "openai": "^6.10.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -33,22 +33,22 @@
     "@iconify-json/tabler": "^1.2.23",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.15.29",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vueuse/core": "^14.0.0",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "@vueuse/core": "^14.1.0",
     "electron": "^37.2.3",
     "electron-builder": "^26.0.12",
-    "electron-vite": "^4.0.1",
-    "es-toolkit": "^1.41.0",
-    "naive-ui": "^2.43.1",
+    "electron-vite": "^5.0.0",
+    "es-toolkit": "^1.42.0",
+    "naive-ui": "^2.43.2",
     "pinia": "^3.0.4",
-    "prettier": "^3.6.2",
-    "sass": "^1.94.0",
+    "prettier": "^3.7.4",
+    "sass": "^1.96.0",
     "typescript": "^5.9.3",
-    "unocss": "^66.5.6",
-    "vite": "^7.2.2",
-    "vue": "^3.5.24",
-    "vue-router": "^4.6.3",
-    "vue-tsc": "^3.1.3"
+    "unocss": "^66.5.10",
+    "vite": "^7.2.7",
+    "vue": "^3.5.25",
+    "vue-router": "^4.6.4",
+    "vue-tsc": "^3.1.8"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
