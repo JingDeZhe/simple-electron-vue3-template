@@ -168,7 +168,7 @@ function back() {
 
 <template>
   <div class="h-full overflow-hidden">
-    <n-card :bordered="false" title="AI 配置管理">
+    <n-card :bordered="false" title="AI 配置管理" class="h-full" content-class="overflow-auto">
       <template #header-extra>
         <div class="flex gap-2">
           <n-button @click="back">返回</n-button>
