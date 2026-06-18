@@ -9,10 +9,11 @@ body {
     background-color 0.2s ease-in-out;
   color: #333639;
   background-color: #fff;
-  &[theme='dark'] {
-    background-color: #161616;
-    color: #ffffffd1;
-  }
+}
+
+html.dark body {
+  background-color: #161616;
+  color: #ffffffd1;
 }
 
 .all-center {

@@ -6,24 +6,25 @@ import initSQL from './init.sql?raw'
 import { getUid } from '@shared/utils'
 
 class AIConfigDB {
-  private db: Database.Database
+  private db: Database.Database | null = null
 
-  constructor() {
-    // 使用 userData 目录存储数据库，确保跨平台兼容性和用户权限
-    const userDataPath = app.getPath('userData')
-    const dbPath = join(userDataPath, 'main.db')
-
-    this.db = new Database(dbPath)
-    this.db.pragma('journal_mode = WAL') // 启用 WAL 模式提高并发性能
-
-    this.initTable()
+  private getDB(): Database.Database {
+    if (!this.db) {
+      const userDataPath = app.getPath('userData')
+      const dbPath = join(userDataPath, 'main.db')
+      this.db = new Database(dbPath)
+      this.db.pragma('journal_mode = WAL') // 启用 WAL 模式提高并发性能
+      this.initTable()
+    }
+    return this.db
   }
 
   private initTable(): void {
-    this.db.exec(initSQL)
+    this.getDB().exec(initSQL)
   }
 
   create(input: CreateAIConfigInput): AIConfig {
+    const db = this.getDB()
     const now = Date.now()
     const id = getUid()
 
@@ -32,7 +33,7 @@ class AIConfigDB {
       this.clearDefaultConfig()
     }
 
-    const stmt = this.db.prepare(`
+    const stmt = db.prepare(`
       INSERT INTO ai_configs (
         id, name, base_url, api_key, model, temperature, max_tokens,
         top_p, frequency_penalty, presence_penalty, is_default, created_at, updated_at
@@ -59,27 +60,28 @@ class AIConfigDB {
   }
 
   findById(id: string): AIConfig | undefined {
-    const stmt = this.db.prepare('SELECT * FROM ai_configs WHERE id = ?')
+    const stmt = this.getDB().prepare('SELECT * FROM ai_configs WHERE id = ?')
     const row = stmt.get(id) as any
 
     return row ? this.mapRowToConfig(row) : undefined
   }
 
   findAll(): AIConfig[] {
-    const stmt = this.db.prepare('SELECT * FROM ai_configs ORDER BY created_at DESC')
+    const stmt = this.getDB().prepare('SELECT * FROM ai_configs ORDER BY created_at DESC')
     const rows = stmt.all() as any[]
 
     return rows.map((row) => this.mapRowToConfig(row))
   }
 
   findDefault(): AIConfig | undefined {
-    const stmt = this.db.prepare('SELECT * FROM ai_configs WHERE is_default = 1 LIMIT 1')
+    const stmt = this.getDB().prepare('SELECT * FROM ai_configs WHERE is_default = 1 LIMIT 1')
     const row = stmt.get() as any
 
     return row ? this.mapRowToConfig(row) : undefined
   }
 
   update(input: UpdateAIConfigInput): AIConfig | undefined {
+    const db = this.getDB()
     const existing = this.findById(input.id)
     if (!existing) {
       return undefined
@@ -141,7 +143,7 @@ class AIConfigDB {
 
     values.push(input.id)
 
-    const stmt = this.db.prepare(`
+    const stmt = db.prepare(`
       UPDATE ai_configs SET ${updates.join(', ')} WHERE id = ?
     `)
 
@@ -151,14 +153,14 @@ class AIConfigDB {
   }
 
   delete(id: string): boolean {
-    const stmt = this.db.prepare('DELETE FROM ai_configs WHERE id = ?')
+    const stmt = this.getDB().prepare('DELETE FROM ai_configs WHERE id = ?')
     const result = stmt.run(id)
 
     return result.changes > 0
   }
 
   private clearDefaultConfig(): void {
-    const stmt = this.db.prepare('UPDATE ai_configs SET is_default = 0 WHERE is_default = 1')
+    const stmt = this.getDB().prepare('UPDATE ai_configs SET is_default = 0 WHERE is_default = 1')
     stmt.run()
   }
 
@@ -182,6 +184,7 @@ class AIConfigDB {
 
   close(): void {
     this.db?.close()
+    this.db = null
   }
 }
 

@@ -53,6 +53,7 @@ export class AIService {
       const response = await this.client.chat.completions.create(params)
       return response
     } catch (error: any) {
+      console.error('AI API 请求失败:', error)
       throw new Error(`AI API 请求失败: ${error.message || error}`)
     }
   }

@@ -299,10 +299,10 @@ function back() {
         </n-form>
 
         <template #footer>
-          <n-flex justify="end">
+          <div class="flex justify-end gap-2">
             <n-button @click="showModal = false">取消</n-button>
             <n-button type="primary" :loading="loading" @click="saveConfig">保存</n-button>
-          </n-flex>
+          </div>
         </template>
       </n-card>
     </n-modal>

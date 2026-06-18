@@ -57,6 +57,38 @@ export function objectToCamelCase(obj: Record<string, any>): Record<string, any>
   return result
 }
 
+export function batchInsert(
+  db: Database.Database,
+  table: string,
+  columns: string[],
+  rows: any[][]
+): number {
+  const placeholders = columns.map(() => '?').join(', ')
+  const query = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`
+
+  const insert = db.prepare(query)
+  const transaction = db.transaction((rows: any[][]) => {
+    for (const row of rows) {
+      insert.run(...row)
+    }
+  })
+
+  transaction(rows)
+  return rows.length
+}
+
+export function tableExists(db: Database.Database, tableName: string): boolean {
+  const result = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`)
+    .get(tableName)
+  return !!result
+}
+
+export function getTableColumns(db: Database.Database, tableName: string): string[] {
+  const result = db.prepare(`PRAGMA table_info(${tableName})`).all() as Array<{ name: string }>
+  return result.map((r) => r.name)
+}
+
 export function backupDatabase(db: Database.Database, backupPath: string): void {
   db.backup(backupPath)
 }
@@ -82,15 +114,6 @@ export function getDatabaseStats(db: Database.Database): {
 // 回收空闲页面，减小数据库文件体积
 export function vacuumDatabase(db: Database.Database): void {
   db.exec('VACUUM')
-}
-
-// 更新表统计信息，帮助查询优化器选择更好的执行计划
-export function analyzeDatabase(db: Database.Database, tableName?: string): void {
-  if (tableName) {
-    db.exec(`ANALYZE ${tableName}`)
-  } else {
-    db.exec('ANALYZE')
-  }
 }
 
 export function checkDatabaseIntegrity(db: Database.Database): boolean {
